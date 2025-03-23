@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>청구회 골프 모임 - 회원 검색</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>청구회 골프 모임 회원 검색</h1>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">대시보드</a></li>
+                    <li><a href="member-search.html" class="active">회원 검색</a></li>
+                    <li><a href="#" id="logout-btn">로그아웃</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="search-section">
+            <h2>회원 검색</h2>
+            <div class="search-form">
+                <input type="text" id="search-input" placeholder="이름, 기수, 또는 전화번호 검색...">
+                <button id="search-btn">검색</button>
+            </div>
+            <div class="filter-options">
+                <label>
+                    <input type="checkbox" id="filter-male" checked>
+                    남성
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-female" checked>
+                    여성
+                </label>
+                <select id="filter-cohort">
+                    <option value="">전체 기수</option>
+                    <!-- 기수 옵션들은 JS로 동적 추가 -->
+                </select>
+            </div>
+        </div>
+
+        <div id="search-results">
+            <p>검색 결과가 여기에 표시됩니다.</p>
+        </div>
+
+        <div id="member-detail" class="hidden">
+            <h2 id="member-name"></h2>
+            <div class="member-info">
+                <p>기수: <span id="member-cohort"></span></p>
+                <p>성별: <span id="member-gender"></span></p>
+                <p>연락처: <span id="member-phone"></span></p>
+            </div>
+            <div class="member-stats">
+                <div class="card">
+                    <h3>참여 통계</h3>
+                    <div class="chart-container">
+                        <canvas id="participationChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>스코어 변화</h3>
+                    <div class="chart-container">
+                        <canvas id="scoreChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>핸디캡 변화</h3>
+                    <div class="chart-container">
+                        <canvas id="handicapChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>상세 기록</h3>
+                <div class="table-container">
+                    <table id="recordsTable">
+                        <thead>
+                            <tr>
+                                <th>년도</th>
+                                <th>참여 횟수</th>
+                                <th>최고 성적</th>
+                                <th>평균 스코어</th>
+                                <th>핸디캡</th>
+                                <th>월별 스코어</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>
