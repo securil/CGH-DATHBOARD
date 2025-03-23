@@ -1,0 +1,159 @@
+let allMembers = []; // 전체 회원 데이터
+
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        // 데이터 로드
+        const response = await fetch('data/members.json');
+        const data = await response.json();
+        allMembers = data.members;
+        
+        // 기수 목록 생성
+        populateCohortFilter(allMembers);
+        
+        // 검색 이벤트 리스너 추가
+        setupSearchEventListeners();
+    } catch (error) {
+        console.error('데이터 로딩 중 오류 발생:', error);
+    }
+});
+
+// 기수 필터 옵션 생성
+function populateCohortFilter(members) {
+    const cohorts = [...new Set(members.map(member => member.cohort))].filter(cohort => cohort > 0).sort((a, b) => a - b);
+    const selectElement = document.getElementById('filter-cohort');
+    
+    cohorts.forEach(cohort => {
+        const option = document.createElement('option');
+        option.value = cohort;
+        option.textContent = cohort + '기';
+        selectElement.appendChild(option);
+    });
+}
+
+// 검색 이벤트 리스너 설정
+function setupSearchEventListeners() {
+    const searchButton = document.getElementById('search-btn');
+    const searchInput = document.getElementById('search-input');
+    const maleCheckbox = document.getElementById('filter-male');
+    const femaleCheckbox = document.getElementById('filter-female');
+    const cohortSelect = document.getElementById('filter-cohort');
+    
+    searchButton.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+    
+    // 필터 변경 시 검색 결과 업데이트
+    maleCheckbox.addEventListener('change', performSearch);
+    femaleCheckbox.addEventListener('change', performSearch);
+    cohortSelect.addEventListener('change', performSearch);
+}
+
+// 검색 실행
+function performSearch() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const showMale = document.getElementById('filter-male').checked;
+    const showFemale = document.getElementById('filter-female').checked;
+    const selectedCohort = document.getElementById('filter-cohort').value;
+    
+    // 필터링
+    const filteredMembers = allMembers.filter(member => {
+        // 성별 필터
+        if ((member.gender === '남성' && !showMale) || (member.gender === '여성' && !showFemale)) {
+            return false;
+        }
+        
+        // 기수 필터
+        if (selectedCohort && member.cohort.toString() !== selectedCohort) {
+            return false;
+        }
+        
+        // 검색어 필터
+        if (searchTerm) {
+            return (
+                member.name.toLowerCase().includes(searchTerm) ||
+                member.phone.includes(searchTerm) ||
+                member.cohort.toString().includes(searchTerm)
+            );
+        }
+        
+        return true;
+    });
+    
+    displaySearchResults(filteredMembers);
+}
+
+// 검색 결과 표시
+function displaySearchResults(members) {
+    const resultsContainer = document.getElementById('search-results');
+    resultsContainer.innerHTML = '';
+    
+    if (members.length === 0) {
+        resultsContainer.innerHTML = '<p>검색 결과가 없습니다.</p>';
+        return;
+    }
+    
+    const resultsList = document.createElement('div');
+    resultsList.className = 'results-list';
+    
+    members.forEach(member => {
+        const memberCard = document.createElement('div');
+        memberCard.className = 'member-card';
+        memberCard.innerHTML = `
+            <h3>${member.name}</h3>
+            <p>${member.cohort}기 | ${member.gender}</p>
+            <button class="view-details-btn" data-name="${member.name}">상세 보기</button>
+        `;
+        resultsList.appendChild(memberCard);
+    });
+    
+    resultsContainer.appendChild(resultsList);
+    
+    // 상세 보기 버튼 이벤트 추가
+    document.querySelectorAll('.view-details-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const memberName = this.getAttribute('data-name');
+            const member = members.find(m => m.name === memberName);
+            displayMemberDetail(member);
+        });
+    });
+}
+
+// 회원 상세 정보 표시
+function displayMemberDetail(member) {
+    document.getElementById('member-detail').classList.remove('hidden');
+    document.getElementById('member-name').textContent = member.name;
+    document.getElementById('member-cohort').textContent = member.cohort + '기';
+    document.getElementById('member-gender').textContent = member.gender;
+    document.getElementById('member-phone').textContent = member.phone;
+    
+    // 차트 렌더링
+    renderParticipationChart(member);
+    renderScoreChart(member);
+    renderHandicapChart(member);
+    
+    // 상세 기록 테이블
+    renderRecordsTable(member);
+}
+
+// 참여 통계 차트
+function renderParticipationChart(member) {
+    // 구현 생략 (Chart.js 활용)
+}
+
+// 스코어 변화 차트
+function renderScoreChart(member) {
+    // 구현 생략 (Chart.js 활용)
+}
+
+// 핸디캡 변화 차트
+function renderHandicapChart(member) {
+    // 구현 생략 (Chart.js 활용)
+}
+
+// 상세 기록 테이블
+function renderRecordsTable(member) {
+    // 구현 생략
+}
